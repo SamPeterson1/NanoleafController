@@ -2,6 +2,8 @@ package api;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,8 +20,10 @@ public class NanoleafInfo {
 	private static String hardwareVersion;
 	private static String model;
 	
-	private static ArrayList<HexPanel> panels;	
+	private static HashMap<Integer, HexPanel> panels;	
 	private static int controllerX, controllerY, controllerOrientation;
+	private static int globalOrientation;
+	private static int sideLength;
 	
 	private static ArrayList<String> effectsList;
 	private static String selectedEffect;
@@ -34,7 +38,7 @@ public class NanoleafInfo {
 	public static void setConnection(NanoleafConnection connection) throws IOException {
 		NanoleafInfo.connection = connection;
 		
-		panels = new ArrayList<HexPanel>();
+		panels = new HashMap<Integer, HexPanel>();
 		effectsList = new ArrayList<String>();
 		
 		updateAll();
@@ -64,6 +68,9 @@ public class NanoleafInfo {
 	private static void readLayout(JSONObject layout) {
 		panels.clear();
 		
+		globalOrientation = layout.getJSONObject("globalOrientation").getInt("value");
+		sideLength = layout.getJSONObject("layout").getInt("sideLength");
+
 		JSONArray positionData = layout.getJSONObject("layout").getJSONArray("positionData");
 		
 		for (Object obj : positionData) {
@@ -75,7 +82,7 @@ public class NanoleafInfo {
 			int orientation = panelJSON.getInt("o");
 			
 			if (id != 0) {
-				panels.add(new HexPanel(id, x, y, orientation));
+				panels.put(id, new HexPanel(id, x, y, orientation));
 			} else {
 				controllerX = x;
 				controllerY = y;
@@ -136,8 +143,16 @@ public class NanoleafInfo {
 		return model;
 	}
 
-	public static ArrayList<HexPanel> getPanels() {
-		return panels;
+	public static HexPanel getPanel(int id) {
+		return panels.get(id);
+	}
+	
+	public static Collection<Integer> getPanelIds() {
+		return panels.keySet();
+	}
+	
+	public static Collection<HexPanel> getPanels() {
+		return panels.values();
 	}
 	
 	public static int getControllerX() {
@@ -151,7 +166,15 @@ public class NanoleafInfo {
 	public static int getControllerOrientation() {
 		return controllerOrientation;
 	}
+	
+	public static int getSideLength() {
+		return sideLength;
+	}
 
+	public static int getGlobalOrientation() {
+		return globalOrientation;
+	}
+	
 	public static ArrayList<String> getEffectsList() {
 		return effectsList;
 	}

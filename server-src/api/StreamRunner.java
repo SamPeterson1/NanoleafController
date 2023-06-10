@@ -10,12 +10,14 @@ public class StreamRunner extends Thread {
 	
 	private StreamController stream;
 	private AnimationFrame frame;
+	private ColorTracker colorTracker;
 	
 	private StreamedEffect effect;
 	
-	public StreamRunner(StreamedEffect effect, NanoleafConnection nanoleaf) throws IOException {
+	public StreamRunner(StreamedEffect effect, ColorTracker colorTracker, NanoleafConnection nanoleaf) throws IOException {
 		this.stream = new StreamController(nanoleaf.openUDPConnection());
 		this.frame = stream.getFrame();
+		this.colorTracker = colorTracker;
 		
 		this.effect = effect;
 	}
@@ -26,6 +28,7 @@ public class StreamRunner extends Thread {
 		
 		while (!Thread.interrupted()) {
 			if (effect.refresh(frame)) {
+				colorTracker.update(frame);
 				try {
 					this.stream.refresh();
 				} catch (IOException e) {

@@ -23,7 +23,7 @@ public class TCPServer {
 		clientSocket = serverSocket.accept();
 		System.out.println("connected");
 		
-		out = new PrintWriter(clientSocket.getOutputStream());
+		out = new PrintWriter(clientSocket.getOutputStream(), true);
 		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		
 		requestHandler = new RequestHandler();
@@ -31,13 +31,9 @@ public class TCPServer {
 	
 	public void run() throws IOException {
 		System.out.println("running");
-		String line;
-		
-		while ((line = in.readLine()) != null) {
-			System.out.println("recieved request");
-			JSONObject json = new JSONObject(line);
-			requestHandler.handleRequest(json);
-		}
+		JSONObject request = new JSONObject(in.readLine());
+		System.out.println("Recieved request: " + request);
+		out.println(requestHandler.handleRequest(request));
 	}
 	
 	public void sendJSON(JSONObject json) {

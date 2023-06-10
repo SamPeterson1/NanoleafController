@@ -23,16 +23,7 @@ public class TCPClient {
 	
 	public JSONObject sendJSON(JSONObject json) throws IOException {
 		out.println(json);
-		/*
-		StringBuffer response = new StringBuffer();
-		String line;
-		while ((line = in.readLine()) != null)
-			response.append(line);
-				
-		return new JSONObject(response.toString());
-		*/
-		
-		return null;
+		return new JSONObject(in.readLine());
 	}
 	
 	public void disconnect() throws IOException {

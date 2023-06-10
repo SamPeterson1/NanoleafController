@@ -1,11 +1,16 @@
 package server;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import api.EffectController;
+import api.HexPanel;
 import api.NanoleafInfo;
+import api.RGBColor;
 import effects.FlashEffect;
 import net.NanoleafConnection;
 
@@ -24,12 +29,45 @@ public class RequestHandler {
 		effectController.addEffect(flash);
 	}
 	
-	public void handleRequest(JSONObject request) throws IOException {
-		System.out.println("recieved json: " + request);
-		if (request.getString("foo").equals("bar")) {
+	public JSONObject handleRequest(JSONObject request) throws IOException {
+		JSONObject response = new JSONObject();
+		System.out.println("recieved request: " + request);
+		
+		if (request.getString("request").equals("panelLayout")) {
+			Collection<HexPanel> panels = NanoleafInfo.getPanels();
+			JSONArray layoutInfo = new JSONArray();
+			
+			response.put("panelLayout", layoutInfo);
+			
+			for (HexPanel panel : panels) {
+				layoutInfo.put(new JSONObject().put("id", panel.getId())
+											   .put("x", panel.getX())
+											   .put("y", panel.getY()));
+			}
+			
+			response.put("orientation", NanoleafInfo.getGlobalOrientation());
+			response.put("sideLength", NanoleafInfo.getSideLength());
+		} else if (request.getString("request").equals("test")) {
 			effectController.setEffect("flash");
-			System.out.println("set effect");
+			response.put("success", true);
+		} else if (request.getString("request").equals("panelColors")) {
+			JSONArray colorInfo = new JSONArray();
+			
+			response.put("panelColors", colorInfo);
+			HashMap<Integer, RGBColor> panelColors = effectController.getColorTracker().getCurrentColors();
+			
+			for (int id : NanoleafInfo.getPanelIds()) {
+				RGBColor color = panelColors.get(id);
+				colorInfo.put(new JSONObject().put("id", id)
+											  .put("r", color.r)
+											  .put("g", color.g)
+											  .put("b", color.b));
+			}
 		}
+		
+		System.out.println("Sent response: " + response);
+		
+		return response;
 	}
 	
 }

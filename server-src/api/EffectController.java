@@ -18,11 +18,17 @@ public class EffectController {
 	private NanoleafConnection nanoleaf;
 
 	private StreamRunner streamRunner;
+	private ColorTracker colorTracker;
 	
 	public EffectController(NanoleafConnection nanoleaf) {
 		this.nanoleaf = nanoleaf;
+		this.colorTracker = new ColorTracker();
 		this.customEffects = new HashMap<String, CustomEffect>();
 		this.streamedEffects = new HashMap<String, StreamedEffect>();
+	}
+	
+	public ColorTracker getColorTracker() {
+		return this.colorTracker;
 	}
 	
 	public void addEffect(CustomEffect effect) {
@@ -49,7 +55,7 @@ public class EffectController {
 	}
 	
 	private void sendEffect(StreamedEffect effect) throws IOException {
-		this.streamRunner = new StreamRunner(effect, nanoleaf);
+		this.streamRunner = new StreamRunner(effect, colorTracker, nanoleaf);
 		this.streamRunner.start();
 	}
 	

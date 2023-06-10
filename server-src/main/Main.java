@@ -9,7 +9,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			TCPServer server = new TCPServer(3333);
-			server.run();
+			while(true) server.run();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -13,7 +13,7 @@ public class HexPanel {
 		this.y = y;
 		this.orientation = orientation;
 	}
-
+	
 	public int getId() {
 		return id;
 	}
