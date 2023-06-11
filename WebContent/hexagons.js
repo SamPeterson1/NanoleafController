@@ -1,5 +1,13 @@
+const net = require('net');
+const client = new net.Socket();
+client.connect({ port: 3333}, "localhost", () => {
+	client.write({ request: "panelLayout" });
+});
+client.on("data", (data) => {
+	console.log(data);
+});
 
-
+/*
 const canvas = document.getElementById("hexagons");
 const ctx = canvas.getContext("2d");
 const orientationRad = -panelLayout["orientation"] * Math.PI / 180;
@@ -9,6 +17,7 @@ const cosO = Math.cos(orientationRad);
 const panelDiameter = 20;
 
 var layoutArr = [];
+var panelIds = [];
 var minX = Number.MAX_SAFE_INTEGER, maxX = Number.MIN_SAFE_INTEGER;
 var minY = Number.MAX_SAFE_INTEGER, maxY = Number.MIN_SAFE_INTEGER;
 var numPanels = 0;
@@ -28,6 +37,7 @@ for (var i in panelLayout["panelLayout"]) {
 	if (newY < minY) minY = newY;
 	
 	layoutArr.push(newX, newY);
+	panelIds.push(panel["id"]);
 
 	numPanels ++;
 }
@@ -47,7 +57,6 @@ var dy = 200 - centerY;
 
 const paddingRatio = 0.95;
 
-console.log(layoutArr);
 for (var i = 0; i < layoutArr.length; i += 2) {
 	console.log("HI" + i + " " + layoutArr.length);
 	layoutArr[i] += dx;
@@ -57,8 +66,17 @@ for (var i = 0; i < layoutArr.length; i += 2) {
 	layoutArr[i + 1] = scaleRatio * (layoutArr[i + 1] - 200) + 200;
 }
 
+function componentToHex(c) {
+	var hex = c.toString(16);
+	return hex.length == 1 ? "0" + hex : hex;
+}
 
-function fillHex(x, y) {
+function rgbToHex(r, g, b) {
+	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function fillHex(x, y, color) {
+	ctx.fillStyle = color;
 	ctx.beginPath();
 	
 	for (var i = 0; i < 6; i ++) {
@@ -75,10 +93,15 @@ function fillHex(x, y) {
 	ctx.fill();
 }
 
-console.log(layoutArr);
-for (var i = 0; i < layoutArr.length; i += 2) {
-	fillHex(layoutArr[i], layoutArr[i + 1]);
-}
 
 console.log(panelLayout);
 console.log(panelColors);
+
+function draw() {
+	for (var i = 0; i < panelIds.length; i ++) {
+		var color = panelColors["panelColors"][panelIds[i]];
+		var hexColor = rgbToHex(color["r"], color["g"], color["b"]);
+		fillHex(layoutArr[2 * i], layoutArr[2 * i + 1], hexColor);
+	}
+}
+*/

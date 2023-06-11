@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -16,6 +17,9 @@ import net.NanoleafConnection;
 
 public class RequestHandler {
 
+	private static final String ALLOWED_URL = "http://10.2.7.84:8080";
+	private static final String ALLOWED_METHODS = "PUT, POST, GET, OPTIONS";
+	
 	private NanoleafConnection nanoleaf;
 	private EffectController effectController;
 	
@@ -27,6 +31,27 @@ public class RequestHandler {
 		
 		FlashEffect flash = new FlashEffect();
 		effectController.addEffect(flash);
+		
+	}
+	
+	public HTTPResponse handleRequest(HTTPRequest request) {
+		
+		HTTPResponse response = new HTTPResponse(request.getVersion());
+		HTTPMethod method = request.getMethod();
+		
+		if (method == HTTPMethod.OPTIONS) {
+			response.setResponseCode(HTTPResponseCode.NO_CONTENT);
+			response.addHeader("Access-Control-Allow-Methods", ALLOWED_METHODS);
+		} else if (method != HTTPMethod.UNSUPPORTED) {
+			response.setResponseCode(HTTPResponseCode.OK);
+			response.setContent(new JSONObject().put("foo", "bar").put("hoo", new JSONObject().put("beep", "boop")));
+		}
+		
+		response.addHeader("Date", String.valueOf(new Date()));
+		response.addHeader("Access-Control-Allow-Origin", ALLOWED_URL);
+		
+		return response;
+		
 	}
 	
 	public JSONObject handleRequest(JSONObject request) throws IOException {
@@ -51,17 +76,16 @@ public class RequestHandler {
 			effectController.setEffect("flash");
 			response.put("success", true);
 		} else if (request.getString("request").equals("panelColors")) {
-			JSONArray colorInfo = new JSONArray();
+			JSONObject colorInfo = new JSONObject();
 			
 			response.put("panelColors", colorInfo);
 			HashMap<Integer, RGBColor> panelColors = effectController.getColorTracker().getCurrentColors();
 			
 			for (int id : NanoleafInfo.getPanelIds()) {
 				RGBColor color = panelColors.get(id);
-				colorInfo.put(new JSONObject().put("id", id)
-											  .put("r", color.r)
-											  .put("g", color.g)
-											  .put("b", color.b));
+				colorInfo.put(String.valueOf(id), new JSONObject().put("r", color.r)
+											  	  				  .put("g", color.g)
+											  	  				  .put("b", color.b));
 			}
 		}
 		
