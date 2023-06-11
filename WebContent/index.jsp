@@ -7,12 +7,9 @@
 	</head>
 	<body>	
 		<canvas id="hexagons" width="800" height="400"></canvas>
-		<script>
-			fetch("http://10.2.7.84:3333", {
-				method: "PUT",
-				body: JSON.stringify({foo: "bar"})
-			}).then((response) => response.text()).then((text) => alert(text));
-		</script>
+		<script src="hexagons.js"></script>
+		<button onClick="red()">Red!</button>
+		<button onClick="green()">Green!</button>
 		<h1>beep beep.</h1>
 	</body>
 </html>

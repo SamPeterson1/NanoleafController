@@ -3,46 +3,57 @@ package api;
 import java.util.HashMap;
 
 import effects.AnimationFrame;
-import effects.CustomEffect;
 
 public class ColorTracker {
 
 	private HashMap<Integer, RGBColor> prevColors;
-	private HashMap<Integer, RGBColor> nextColors;
-	private HashMap<Integer, Integer> transitionTimes;
+	private volatile HashMap<Integer, RGBColor> currentColors;
 	
-	private CustomEffect effect;
+	private long frameStartTimeMillis;
+	private AnimationFrame frame;
 	
-	private long lastRequestMillis;
-	
+    private final Object lock = new Object();
+		
 	public ColorTracker() {
 		this.prevColors = new HashMap<Integer, RGBColor>();
-		this.nextColors = new HashMap<Integer, RGBColor>();
-		this.transitionTimes = new HashMap<Integer, Integer>();
+		this.currentColors = new HashMap<Integer, RGBColor>();
+		this.frame = new AnimationFrame();
 	}
 	
 	public HashMap<Integer, RGBColor> getCurrentColors() {
-		long currentMillis = System.currentTimeMillis();
-		long dt = currentMillis - lastRequestMillis;
-		lastRequestMillis = currentMillis;
-		
-		HashMap<Integer, RGBColor> currentColors = new HashMap<Integer, RGBColor>();
-		
-		for (int id : NanoleafInfo.getPanelIds()) {
-			RGBColor color = new RGBColor();
-			color.r = (int) (255 * ((Math.sin(currentMillis + id) + 1) / 2));
-			currentColors.put(id, color);
+		synchronized (lock) {
+			return currentColors;
 		}
-		
-		return currentColors;
 	}
 	
-	public void update(CustomEffect effect) {
-		this.effect = effect;
+	public void updateCurrentColors() {
+		synchronized (lock) {
+			long dt = System.currentTimeMillis() - frameStartTimeMillis;
+						
+			for (int id : frame.getPanelIds()) {
+				RGBColor prevColor = prevColors.getOrDefault(id, new RGBColor());
+				float t = (float) dt / frame.getTransitionTimeMillis();
+				
+				if (frame.hasPanel(id)) {
+					RGBColor nextColor = RGBColor.lerp(prevColor, frame.getPanelColor(id), t);
+					currentColors.put(id, nextColor);
+				} else {
+					currentColors.put(id, prevColor);
+				}
+			}
+		}
 	}
-	
+
 	public void update(AnimationFrame frame) {
-		
+		synchronized (lock) {
+			long frameStartTimeMillis = System.currentTimeMillis();
+			
+			this.frame = frame;
+			prevColors = currentColors;
+			currentColors = new HashMap<Integer, RGBColor>();
+			
+			this.frameStartTimeMillis = frameStartTimeMillis;			
+		}
 	}
 	
 }

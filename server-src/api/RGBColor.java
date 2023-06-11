@@ -16,4 +16,14 @@ public class RGBColor {
 		this.b = b;
 	}
 	
+	public static RGBColor lerp(RGBColor from, RGBColor to, float t) {
+		RGBColor ret = new RGBColor();
+		
+		ret.r = (int) ((float) (to.r - from.r) * t + from.r);
+		ret.g = (int) ((float) (to.g - from.g) * t + from.g);
+		ret.b = (int) ((float) (to.b - from.b) * t + from.b);
+		
+		return ret;
+	}
+	
 }

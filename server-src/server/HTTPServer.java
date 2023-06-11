@@ -21,7 +21,9 @@ public class HTTPServer {
 	
 	public HTTPServer(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
+		System.out.println("beep"); 
 		clientSocket = serverSocket.accept();
+		System.out.println("connected");
 		
 		out = new PrintWriter(clientSocket.getOutputStream());
 		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -32,7 +34,6 @@ public class HTTPServer {
 	public void run() throws IOException {
 		while (true) {
 			String[] startLineTokens = in.readLine().split(" ");
-			
 			HTTPMethod method = HTTPMethod.fromString(startLineTokens[0]);
 			String requestURI = startLineTokens[1];
 			String version = startLineTokens[2];

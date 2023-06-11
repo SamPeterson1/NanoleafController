@@ -30,6 +30,10 @@ public class AnimationFrame {
 		return this.panelColors.size();
 	}
 	
+	public int getTransitionTimeMillis() {
+		return 100 * this.transitionTime;
+	}
+	
 	public int getTransitionTime() {
 		return this.transitionTime;
 	}

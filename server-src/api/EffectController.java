@@ -22,9 +22,9 @@ public class EffectController {
 	
 	public EffectController(NanoleafConnection nanoleaf) {
 		this.nanoleaf = nanoleaf;
-		this.colorTracker = new ColorTracker();
 		this.customEffects = new HashMap<String, CustomEffect>();
 		this.streamedEffects = new HashMap<String, StreamedEffect>();
+		this.colorTracker = new ColorTracker();
 	}
 	
 	public ColorTracker getColorTracker() {
@@ -75,13 +75,15 @@ public class EffectController {
 	
 	public void setEffect(String name) throws IOException {
 		if (streamRunner != null) {
-			streamRunner.interrupt();
+			System.out.println("Interrupted previous effect");
+			streamRunner.closeStream();
 			streamRunner = null;
 		}
 		
 		if (customEffects.containsKey(name)) {
 			this.sendEffect(customEffects.get(name));
 		} else if (streamedEffects.containsKey(name)) {
+			System.out.println("sent " + name);
 			this.sendEffect(streamedEffects.get(name));
 		} else {
 			this.sendEffect(name);

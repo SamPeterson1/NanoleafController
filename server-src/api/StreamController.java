@@ -1,7 +1,6 @@
 package api;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import effects.AnimationFrame;
 import net.NanoleafUDPConnection;
@@ -59,12 +58,6 @@ public class StreamController {
 		}
 		
 		udp.send(data);
-	}
-	
-	private void updatePanelColors() {		
-		for (int panelId : frame.getPanelIds()) {
-			
-		}
 	}
 	
 }
