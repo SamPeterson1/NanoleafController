@@ -18,7 +18,7 @@ import net.NanoleafConnection;
 
 public class RequestHandler {
 
-	private static final String ALLOWED_URL = "http://10.2.7.84:8080";
+	private static final String ALLOWED_URL = "http://10.2.7.84";
 	private static final String ALLOWED_METHODS = "PUT, POST, GET, OPTIONS";
 	
 	private NanoleafConnection nanoleaf;

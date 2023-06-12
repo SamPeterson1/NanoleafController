@@ -7,7 +7,7 @@
     <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="true"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="NanoleafController"/>
     <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_BUILDER_ENABLED" value="true"/>
-    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/home/sam/eclipse-workspace/NanoleafController/build/build.xml"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/home/sam/eclipse-workspace/NanoleafController/buildTools/BuildJar.xml"/>
     <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="full,incremental,"/>
     <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
 </launchConfiguration>
